@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       ENVIRONMENT:
-        description: "Environment"
+        description: "env"
         required: true
         type: string
 
@@ -34,9 +34,9 @@ jobs:
       - name: Generate SPDX SBOM with Syft
         uses: anchore/sbom-action@v0
         with:
-          path: .
           format: spdx
           output-file: sbom.spdx.json
+          path: .
           upload-artifact: false
 
       - name: Install OSV-Scanner
