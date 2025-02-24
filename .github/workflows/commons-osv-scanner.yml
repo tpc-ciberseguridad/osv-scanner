@@ -48,7 +48,7 @@ jobs:
         id: osv_scan
         run: |
           # Intentamos ejecutar el escaneo, y si falla, seguimos adelante pero generamos el reporte
-          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html || echo "OSV Scanner failed or no vulnerabilities detected" > ${{ github.repository_id }}.html
+          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
         continue-on-error: true
 
       - name: Upload OSV Scanner Report as Artifact
@@ -63,3 +63,4 @@ jobs:
         if: success()  # Continúa con el flujo normal si no hubo fallos
         run: |
           echo "No vulnerabilities found. Proceeding with the next steps."
+          
