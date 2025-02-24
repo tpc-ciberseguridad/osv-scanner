@@ -61,11 +61,12 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html ; EXIT_CODE=$?
+          osv-scanner scan --sbom=sbom.spdx.json > ${{ github.repository_id }}.html ; EXIT_CODE=$?
           # echo $EXIT_CODE
 
-          #   if [ $EXIT_CODE -eq 0 ]; then
+          #   if [ $EXIT_CODE -eq 1 ]; then
           #     echo "OSV-Scanner completed successfully. No further action needed."
+                cat ${{ github.repository_id }}.html >> $GITHUB_STEP_SUMMARY
           #     exit 0
           #   else
           #     echo "Error during OSV scan with exit code $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
