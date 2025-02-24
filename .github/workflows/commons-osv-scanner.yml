@@ -57,7 +57,7 @@ jobs:
         run: |
           wget -qO /usr/local/bin/osv-scanner https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
           chmod a+x /usr/local/bin/osv-scanner
-          osv-scanner --version
+          osv-scanner --v
 
       - name: Apply analysis with OSV-Scanner
         run: |
@@ -67,6 +67,6 @@ jobs:
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ vars.PROJECT_NAME }}_report
+          name: ${{ github.sha }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
