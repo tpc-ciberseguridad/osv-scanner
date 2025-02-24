@@ -1,0 +1,65 @@
+name: Dependency analysis with osv-scanner
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+
+      # - name: Install dependencies
+      #   run: |
+      #     chmod +x ./install.sh
+      #     ./install.sh
+
+      - name: Install dependencies (Only for Node.js)
+        run: |
+          if [ -f "package.json" ]; then
+            echo "Node.js project detected. Installing dependencies..."
+            npm install
+          else
+            echo "No Node.js project found. Skipping dependency installation."
+          fi
+
+      - name: Generate SPDX SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx
+          output-file: sbom.spdx.json
+
+      - name: Install OSV-Scanner
+        run: |
+          wget -qO /usr/local/bin/osv-scanner https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
+          chmod a+x /usr/local/bin/osv-scanner
+          osv-scanner --version
+
+      - name: Apply analysis with OSV-Scanner
+        run: |
+          osv-scanner scan --format html --sbom=sbom.spdx.json > report.html
+        continue-on-error: true
+
+      - name: Upload OSV Scanner Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osv-scanner-report
+          path: report.html
+          retention-days: 1
+
+      # - name: Provide download link in the summary
+      #   run: |
+      #     echo "### OSV Scanner Report" >> $GITHUB_STEP_SUMMARY
+      #     echo "You can download the OSV Scanner report from the following link:" >> $GITHUB_STEP_SUMMARY
+      #     echo "[Download SBOM Scanner Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})/artifacts" >> $GITHUB_STEP_SUMMARY
