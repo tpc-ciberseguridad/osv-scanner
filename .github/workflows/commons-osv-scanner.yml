@@ -45,10 +45,15 @@ jobs:
           chmod a+x /usr/local/bin/osv-scanner
           osv-scanner --version
 
-      - name: Apply analysis with OSV-Scanner
-        run: |
-          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
-        continue-on-error: true
+      # - name: Apply analysis with OSV-Scanner
+      #   run: |
+      #     osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
+      #   continue-on-error: true
+
+      - name: Test
+        uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.9.1
+
+
 
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
