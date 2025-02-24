@@ -1,4 +1,4 @@
-name: Dependency analysis with osv-scanner
+name: Dependency analysis with OSV-Scanner
 
 on:
   workflow_call:
@@ -22,12 +22,7 @@ jobs:
         with:
           node-version: ${{ vars.NODE_VERSION }}
 
-      # - name: Install dependencies
-      #   run: |
-      #     chmod +x ./install.sh
-      #     ./install.sh
-
-      - name: Install dependencies (Only for Node.js)
+      - name: Install dependencies (only for Node.js)
         run: |
           if [ -f "package.json" ]; then
             echo "Node.js project detected. Installing dependencies..."
@@ -60,9 +55,4 @@ jobs:
           name: osv-scanner-report
           path: report.html
           retention-days: 1
-
-      # - name: Provide download link in the summary
-      #   run: |
-      #     echo "### OSV Scanner Report" >> $GITHUB_STEP_SUMMARY
-      #     echo "You can download the OSV Scanner report from the following link:" >> $GITHUB_STEP_SUMMARY
-      #     echo "[Download SBOM Scanner Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})/artifacts" >> $GITHUB_STEP_SUMMARY
+          
