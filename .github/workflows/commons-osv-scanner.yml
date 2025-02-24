@@ -18,18 +18,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Check file existence
+        id: check_file
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "package.json"
+
+      - name: Set up Node.js (only if package.json exists)
+        if: steps.check_file.outputs.exists == 'true'
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ vars.NODE_VERSION }}
 
-      - name: Install dependencies (only for Node.js)
+      - name: Install dependencies (only for Node.js if package.json exists)
+        if: steps.check_file.outputs.exists == 'true'
         run: |
-          if [ -f "package.json" ]; then
-            echo "Node.js project detected. Installing dependencies..."
-            npm install
-          else
-            echo "No Node.js project found. Skipping dependency installation."
-          fi
+          echo "Node.js project detected. Installing dependencies..."
+          npm install
+
+      # - name: Install dependencies (only for Node.js)
+      #   run: |
+      #     if [ -f "package.json" ]; then
+      #       echo "Node.js project detected. Installing dependencies..."
+      #       npm install
+      #     else
+      #       echo "No Node.js project found. Skipping dependency installation."
+      #     fi
 
       - name: Generate SPDX SBOM with Syft
         uses: anchore/sbom-action@v0
@@ -49,11 +63,10 @@ jobs:
         run: |
           osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
         continue-on-error: true
-          
+
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.PROJECT_NAME }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
-          
