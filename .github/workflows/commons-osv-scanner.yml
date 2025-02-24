@@ -61,7 +61,7 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
+          OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.html)
 
         continue-on-error: true
 
@@ -71,7 +71,6 @@ jobs:
           name: ${{ github.repository_id }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
-
 
       - name: Mostrar información en el resumen
         run: |
