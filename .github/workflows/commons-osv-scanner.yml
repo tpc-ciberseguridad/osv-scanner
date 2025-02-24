@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       ENVIRONMENT:
-        description: "Environment"
+        description: "env"
         required: true
         type: string
 
@@ -37,6 +37,7 @@ jobs:
           format: spdx
           output-file: sbom.spdx.json
           path: .
+          upload-artifact: false
 
       - name: Install OSV-Scanner
         run: |
@@ -45,22 +46,13 @@ jobs:
           osv-scanner --version
 
       - name: Apply analysis with OSV-Scanner
-        id: osv_scan
         run: |
-          # Intentamos ejecutar el escaneo, y si falla, seguimos adelante pero generamos el reporte
           osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
-        continue-on-error: true
-
+          
       - name: Upload OSV Scanner Report as Artifact
-        if: failure()  # Solo sube el archivo si el escaneo falló
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.repository }}-report-${{ github.sha }}
+          name: ${{ vars.PROJECT_NAME }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
-
-      - name: Proceed with next steps if no vulnerabilities found
-        if: success()  # Continúa con el flujo normal si no hubo fallos
-        run: |
-          echo "No vulnerabilities found. Proceeding with the next steps."
           
