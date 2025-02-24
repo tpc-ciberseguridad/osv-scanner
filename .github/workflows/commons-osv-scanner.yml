@@ -62,9 +62,9 @@ jobs:
       - name: Apply analysis with OSV-Scanner
         run: |
           OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.html) ; EXIT_CODE=$?
+          echo $EXIT_CODE
 
           if [ $EXIT_CODE -eq 0 ]; then
-            
             echo "OSV-Scanner completed successfully. No further action needed."
             exit 0
           else
