@@ -37,7 +37,7 @@ jobs:
           path: .
           format: spdx
           output-file: sbom.spdx.json
-          artifact-name: ${{ github.repository_id }}
+          artifact-name: ${{ github.repository_id }}_sbom
 
       - name: Install OSV-Scanner
         run: |
@@ -47,12 +47,12 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          osv-scanner scan --format html --sbom=sbom.spdx.json > report.html
+          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
         continue-on-error: true
 
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: osv-scanner-report
-          path: report.html
+          name: ${{ github.repository_id }}_report
+          path: ${{ github.repository_id }}.html
           retention-days: 1
