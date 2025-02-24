@@ -36,6 +36,15 @@ jobs:
           echo "Node.js project detected. Installing dependencies..."
           npm install
 
+      # - name: Install dependencies (only for Node.js)
+      #   run: |
+      #     if [ -f "package.json" ]; then
+      #       echo "Node.js project detected. Installing dependencies..."
+      #       npm install
+      #     else
+      #       echo "No Node.js project found. Skipping dependency installation."
+      #     fi
+
       - name: Generate SPDX SBOM with Syft
         uses: anchore/sbom-action@v0
         with:
@@ -52,17 +61,17 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          osv-scanner scan --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
-          EXIT_CODE=$?
-          echo "Exit code: $EXIT_CODE"
+          osv-scanner scan --sbom=sbom.spdx.json > ${{ github.repository_id }}.html ; EXIT_CODE=$?
+          # echo $EXIT_CODE
 
-          if [ $EXIT_CODE -eq 0 ]; then
-            echo "OSV-Scanner completed successfully. No further action needed."
-          else
-            echo "Error during OSV scan with exit code $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
-          fi
+          #   if [ $EXIT_CODE -eq 0 ]; then
+          #     echo "OSV-Scanner completed successfully. No further action needed."
+          #     exit 0
+          #   else
+          #     echo "Error during OSV scan with exit code $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+          #   fi
 
-        continue-on-error: true  # Permite continuar aunque este paso falle
+        continue-on-error: true
 
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
