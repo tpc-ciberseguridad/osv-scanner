@@ -61,7 +61,7 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.html)
+          OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.md)
 
         continue-on-error: true
 
@@ -80,4 +80,4 @@ jobs:
           echo "- **Código de error**: 1" >> $GITHUB_STEP_SUMMARY
           echo "- **Mensaje**: El escaneo no se pudo completar." >> $GITHUB_STEP_SUMMARY
           echo "### Contenido del reporte:" >> $GITHUB_STEP_SUMMARY
-          cat ${{ github.repository_id }}.html >> $GITHUB_STEP_SUMMARY
+          cat ${{ github.repository_id }}.md >> $GITHUB_STEP_SUMMARY
