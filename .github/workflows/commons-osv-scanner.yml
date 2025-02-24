@@ -1,9 +1,12 @@
 name: Dependency analysis with osv-scanner
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        description: "Environment"
+        required: true
+        type: string
 
 permissions:
   contents: read
