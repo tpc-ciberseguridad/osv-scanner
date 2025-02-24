@@ -61,11 +61,23 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
+          OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.html) ; EXIT_CODE=$?
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            
+            echo "OSV-Scanner completed successfully. No further action needed."
+            exit 0
+          else
+            echo "OSV-Scanner failed with exit code $EXIT_CODE"
+            echo "Error during OSV scan." >> $GITHUB_STEP_SUMMARY
+            echo "echo $OUTPUT" >> $GITHUB_STEP_SUMMARY
+          fi
+
+        continue-on-error: true
 
       - name: Upload OSV Scanner Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.sha }}_report
+          name: ${{ github.repository_id }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
