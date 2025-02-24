@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  sbom:
+  osv-scanner:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
