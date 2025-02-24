@@ -37,6 +37,7 @@ jobs:
           path: .
           format: spdx
           output-file: sbom.spdx.json
+          artifact-name: ${{ github.repository_id }}
 
       - name: Install OSV-Scanner
         run: |
@@ -55,4 +56,3 @@ jobs:
           name: osv-scanner-report
           path: report.html
           retention-days: 1
-          
