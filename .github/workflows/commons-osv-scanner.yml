@@ -24,10 +24,6 @@ jobs:
         with:
           files: "package.json"
 
-      - name: Debug file existence value
-        run: |
-          echo: "files_exists: ${{ steps.check_files.outputs.files_exists }}"
-
       - name: Set up Node.js (only if package.json exists)
         if: steps.check_files.outputs.files_exists == 'true'
         uses: actions/setup-node@v3
