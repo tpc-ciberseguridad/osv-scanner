@@ -34,7 +34,10 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'true'
         run: |
           echo "Node.js project detected. Installing dependencies..."
-          npm install
+          export NODE_OPTIONS=--max_old_space_size=6666
+          echo $NODE_OPTIONS
+          chmod +x ./build.sh
+          ./build.sh
 
       - name: Generate SPDX SBOM with Syft
         uses: anchore/sbom-action@v0
