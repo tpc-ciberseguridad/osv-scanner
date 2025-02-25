@@ -36,15 +36,6 @@ jobs:
           echo "Node.js project detected. Installing dependencies..."
           npm install
 
-      # - name: Install dependencies (only for Node.js)
-      #   run: |
-      #     if [ -f "package.json" ]; then
-      #       echo "Node.js project detected. Installing dependencies..."
-      #       npm install
-      #     else
-      #       echo "No Node.js project found. Skipping dependency installation."
-      #     fi
-
       - name: Generate SPDX SBOM with Syft
         uses: anchore/sbom-action@v0
         with:
@@ -61,23 +52,14 @@ jobs:
 
       - name: Apply analysis with OSV-Scanner
         run: |
-          OUTPUT=$(osv-scanner scan --sbom=sbom.spdx.json | tee ${{ github.repository_id }}.md)
+          osv-scanner scan --format html --sbom=sbom.spdx.json > ${{ github.repository_id }}.html
 
         continue-on-error: true
 
-      - name: Upload OSV Scanner Report as Artifact
+      - name: Upload OSV-Scanner report as artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.repository_id }}_report
           path: ${{ github.repository_id }}.html
           retention-days: 1
-
-      - name: Mostrar información en el resumen
-        run: |
-          echo "## Resultado del análisis de OSV-Scanner" >> $GITHUB_STEP_SUMMARY
-          echo "El análisis de vulnerabilidades ha **fallado**." >> $GITHUB_STEP_SUMMARY
-          echo "### Detalles del error:" >> $GITHUB_STEP_SUMMARY
-          echo "- **Código de error**: 1" >> $GITHUB_STEP_SUMMARY
-          echo "- **Mensaje**: El escaneo no se pudo completar." >> $GITHUB_STEP_SUMMARY
-          echo "### Contenido del reporte:" >> $GITHUB_STEP_SUMMARY
-          cat ${{ github.repository_id }}.md >> $GITHUB_STEP_SUMMARY
+          
